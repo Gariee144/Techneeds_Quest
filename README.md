@@ -44,4 +44,5 @@ Credentials generated inside the app (new mentors and mentees) also work on the 
 
 ## Team
 
-Add your team name and members here.
+Garry Sidhu
+Fiza Mehta
