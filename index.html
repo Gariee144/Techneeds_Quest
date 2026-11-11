@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TechNeeds Quest - Prototype</title>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--card2:#273449;--vio:#8b5cf6;--teal:#22d3ee;--txt:#f8fafc;--mut:#cbd5e1;--ok:#34d399;--bad:#f87171}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:Segoe UI,Calibri,Arial,sans-serif;line-height:1.45}
+h1,h2,h3{margin:0}
+.mut{color:var(--mut)}.small{font-size:13px}
+nav{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 20px;background:var(--card);border-bottom:2px solid var(--vio);position:sticky;top:0;z-index:5}
+.brand{font-weight:800;font-size:20px;margin-right:auto}.brand span,h1 span{color:var(--teal)}
+nav button.t{background:none;border:0;color:var(--mut);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:15px}
+nav button.t.on{background:var(--vio);color:#fff}
+.chip{display:flex;align-items:center;gap:8px;font-size:14px}
+main{max-width:1000px;margin:0 auto;padding:22px 16px 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:14px 0}
+.card{background:var(--card);border-radius:14px;padding:18px;margin:14px 0}
+.grid .card{margin:0}
+.stat b{display:block;font-size:30px;color:var(--teal)}
+.bar{background:#0b1220;border-radius:99px;height:10px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--vio),var(--teal));border-radius:99px}
+input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #475569;background:#0f172a;color:var(--txt);font-size:15px;margin:6px 0 12px}
+label{font-size:13px;color:var(--mut)}
+.btn{background:var(--vio);color:#fff;border:0;padding:10px 18px;border-radius:10px;font-size:15px;cursor:pointer;font-weight:600}
+.btn:hover{filter:brightness(1.15)}.btn.alt{background:var(--card2)}.btn.sm{padding:6px 12px;font-size:13px}
+.row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #334155;flex-wrap:wrap}
+.row:last-child{border:0}.row .grow{flex:1;min-width:150px}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700;background:var(--card2);color:var(--teal)}
+.tag.Quiz{color:#fbbf24}.tag.Project{color:#f472b6}.tag.Video{color:var(--teal)}
+.late{color:var(--bad)}.done{color:var(--ok);font-weight:700}
+.login{min-height:100vh;display:grid;place-items:center;padding:16px}
+.login .card{width:100%;max-width:380px;padding:28px}
+.login h1{font-size:32px;margin-bottom:4px}
+.seg{display:flex;gap:6px;margin:18px 0 10px}
+.seg button{flex:1;padding:9px;border-radius:8px;border:1px solid #475569;background:none;color:var(--mut);cursor:pointer}
+.seg button.on{background:var(--vio);color:#fff;border-color:var(--vio)}
+.cred{border:2px dashed var(--teal);background:#0b2a35}
+.me{background:#2a2250;border-radius:10px}
+.rank{width:34px;font-weight:800;font-size:18px;color:var(--teal);text-align:center}
+.hero{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:6px;background:var(--card2);padding:8px 14px;border-radius:99px;margin:4px 6px 4px 0;font-weight:600}
+.ai{border-left:4px solid var(--vio)}
+ul{padding-left:20px;margin:8px 0}li{margin:6px 0}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:10px 6px;border-bottom:1px solid #334155}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--vio);color:#fff;padding:12px 22px;border-radius:99px;opacity:0;transition:.3s;z-index:9;font-weight:600}
+#toast.show{transform:translateX(-50%);opacity:1}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),D=864e5,now=Date.now();
+const S={user:null,role:'Mentee',tab:'',prof:null,cred:null,
+ programs:[{id:1,name:'Web Dev Cohort 2026'}],
+ mentors:[{name:'Riya Sharma',user:'mentor1',pass:'mentor@123',program:1}],
+ mentees:[
+  {enr:'TN2601',name:'Aarav Mehta',pass:'aarav1',tags:['React','UI'],streak:6,done:{1:20,2:46,3:88,4:19}},
+  {enr:'TN2602',name:'Meera Nair',pass:'meera1',tags:['Python','DSA'],streak:4,done:{1:19,2:42,3:80}},
+  {enr:'TN2603',name:'Kavya Singh',pass:'kavya1',tags:['AI','Python'],streak:3,done:{1:20,2:38,4:18}},
+  {enr:'TN2604',name:'Ishita Rao',pass:'ishita1',tags:['UI','React'],streak:1,done:{1:15,2:30}},
+  {enr:'TN2605',name:'Gariee',pass:'gariee1',tags:['React','AI'],streak:2,done:{1:18,2:40}}],
+ resources:[
+  {id:1,type:'Video',title:'HTML & CSS Basics',due:now+3*D,max:20,program:1},
+  {id:2,type:'Quiz',title:'Web Fundamentals Quiz',due:now+4*D,max:50,program:1},
+  {id:3,type:'Project',title:'Build a Landing Page',due:now+6*D,max:100,program:1},
+  {id:4,type:'Video',title:'JavaScript Essentials',due:now+5*D,max:20,program:1},
+  {id:5,type:'Quiz',title:'JavaScript Quiz',due:now+7*D,max:50,program:1},
+  {id:6,type:'Project',title:'Build a Portfolio Site',due:now+9*D,max:100,program:1}]};
+const DEMO={Admin:['admin','admin123'],Mentor:['mentor1','mentor@123'],Mentee:['TN2605','gariee1']};
+const TABS={Admin:['Programs','Mentors'],Mentor:['Mentees','Resources'],Mentee:['Dashboard','Leaderboard','My Profile']};
+const REC={React:'Build a small React app with state and routing',UI:'Study design systems and Figma auto-layout',AI:'Try a beginner machine learning mini-project',Python:'Practice data structures in Python',DSA:'Solve 5 array problems this week'};
+
+const total=m=>Object.values(m.done).reduce((a,b)=>a+b,0);
+const lvl=m=>Math.floor(total(m)/50)+1;
+const board=()=>[...S.mentees].sort((a,b)=>total(b)-total(a));
+const rank=m=>board().indexOf(m)+1;
+const me=()=>S.mentees.find(m=>m.enr==S.user.enr);
+const pw=()=>'tn@'+Math.random().toString(36).slice(2,7);
+const left=t=>{const d=t-Date.now();return d<0?'Overdue':Math.floor(d/D)+'d '+Math.floor(d%D/36e5)+'h left'};
+const flash=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)};
+const pname=id=>(S.programs.find(p=>p.id==id)||{}).name||'-';
+
+function av(seed,sz=44){let h=0;for(const c of seed)h=(h*31+c.charCodeAt(0))>>>0;
+ const hue=h%360,sk=['#f1c27d','#e0ac69','#c68642','#8d5524'][h%4],hr=['#2d1b0e','#6b4423','#111','#b5651d'][(h>>3)%4],mo=(h>>5)%3;
+ const mouth=mo==0?'<path d="M26 42 q6 5 12 0" stroke="#111" fill="none" stroke-width="2"/>':mo==1?'<rect x="27" y="41" width="10" height="2.5" rx="1" fill="#111"/>':'<path d="M26 41 q6 7 12 0z" fill="#111"/>';
+ return `<svg width="${sz}" height="${sz}" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="hsl(${hue},70%,45%)"/><circle cx="32" cy="34" r="16" fill="${sk}"/><path d="M16 32 a16 16 0 0 1 32 0 c-6-6-26-6-32 0z" fill="${hr}"/><circle cx="26" cy="35" r="2" fill="#111"/><circle cx="38" cy="35" r="2" fill="#111"/>${mouth}</svg>`}
+
+function badges(m){const b=[],d=m.done,got=t=>S.resources.filter(r=>r.type==t&&d[r.id]!=null);
+ if(Object.keys(d).length)b.push(['🚀','First Step']);
+ if(got('Quiz').some(r=>d[r.id]/r.max>=.9))b.push(['🎯','Quiz Ace']);
+ if(got('Project').length)b.push(['🛠️','Project Builder']);
+ if(m.streak>=5)b.push(['🔥','Streak Keeper']);
+ if(rank(m)<=3)b.push(['🏆','Top 3']);
+ return b}
+function skill(m,t){const rs=S.resources.filter(r=>r.type==t),mx=rs.reduce((a,r)=>a+r.max,0);
+ return mx?Math.round(rs.reduce((a,r)=>a+(m.done[r.id]||0),0)/mx*100):0}
+function summary(m){const best=['Video','Quiz','Project'].map(x=>[x,skill(m,x)]).sort((a,b)=>b[1]-a[1])[0][0].toLowerCase(),r=rank(m);
+ return `${m.name.split(' ')[0]} is a Level ${lvl(m)} learner with ${total(m)} XP, ranked #${r} of ${S.mentees.length}. Strongest in ${best}s, on a ${m.streak}-day streak, with interests in ${m.tags.join(' and ')}. ${r<=3?'Keep defending your spot on the podium!':'A couple more submissions can move you up the leaderboard.'}`}
+function recs(m){const p=S.resources.filter(r=>m.done[r.id]==null&&r.due>Date.now()).slice(0,2).map(r=>`Complete "${r.title}" (${r.type}) before the deadline`);
+ return [...p,...m.tags.map(t=>REC[t]).filter(Boolean)].slice(0,4)}
+
+/* ---------- actions ---------- */
+function setRole(r){S.role=r;draw()}
+function login(){const u=$('#u').value.trim(),p=$('#p').value,r=S.role;let x;
+ if(r=='Admin'&&u=='admin'&&p=='admin123')x={role:r,name:'Admin'};
+ else if(r=='Mentor'){const m=S.mentors.find(m=>m.user==u&&m.pass==p);if(m)x={role:r,name:m.name,program:m.program}}
+ else if(r=='Mentee'){const m=S.mentees.find(m=>m.enr==u&&m.pass==p);if(m)x={role:r,name:m.name,enr:m.enr}}
+ if(!x)return flash('Invalid credentials');
+ S.user=x;S.tab=TABS[r][0];S.prof=null;S.cred=null;draw()}
+function logout(){S.user=null;S.cred=null;draw()}
+function go(t){S.tab=t;S.prof=null;S.cred=null;draw()}
+function addProgram(){const n=$('#pn').value.trim();if(!n)return flash('Enter a program name');
+ S.programs.push({id:Date.now(),name:n});flash('Program created');draw()}
+function addMentor(){const n=$('#mn').value.trim();if(!n)return flash('Enter mentor name');
+ const m={name:n,user:'mentor'+(S.mentors.length+1),pass:pw(),program:+$('#mp').value};S.mentors.push(m);
+ S.cred={t:'Mentor credentials generated',u:m.user,p:m.pass};draw()}
+function addMentee(){const n=$('#en').value.trim();if(!n)return flash('Enter mentee name');
+ const m={enr:'TN26'+String(S.mentees.length+1).padStart(2,'0'),name:n,pass:pw(),tags:['React','AI'],streak:0,done:{}};S.mentees.push(m);
+ S.cred={t:'Mentee credentials generated',u:m.enr,p:m.pass};draw()}
+function addRes(){const t=$('#rt').value,n=$('#rn').value.trim(),d=+$('#rd').value,x=+$('#rm').value;
+ if(!n||!d||!x)return flash('Fill all fields');
+ S.resources.push({id:Date.now(),type:t,title:n,due:Date.now()+d*D,max:x,program:S.user.program});flash('Resource published');draw()}
+function complete(id){const r=S.resources.find(r=>r.id==id),m=me();if(m.done[id]!=null||r.due<Date.now())return;
+ const s=r.type=='Video'?r.max:Math.round(r.max*(.75+Math.random()*.25));m.done[id]=s;m.streak++;flash('+'+s+' XP earned!');draw()}
+function viewProf(e){S.prof=e;draw()}
+
+/* ---------- views ---------- */
+function credBox(){return S.cred?`<div class="card cred"><h3>${S.cred.t}</h3><p>Username / Enrollment no: <b>${S.cred.u}</b><br>Password: <b>${S.cred.p}</b></p><p class="small mut">Share these securely. They work on the login screen.</p></div>`:''}
+function vPrograms(){return `<h2>Mentorship Programs</h2><div class="card"><label>New program / cohort name</label><input id="pn" placeholder="e.g. AI/ML Cohort 2026"><button class="btn" onclick="addProgram()">Create program</button></div>
+<div class="card">${S.programs.map(p=>`<div class="row"><div class="grow"><b>${p.name}</b></div><span class="tag">${S.mentors.filter(m=>m.program==p.id).length} mentors</span></div>`).join('')}</div>`}
+function vMentors(){return `<h2>Mentors</h2><div class="card"><label>Mentor name</label><input id="mn" placeholder="Full name"><label>Assign to program</label><select id="mp">${S.programs.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select><button class="btn" onclick="addMentor()">Onboard mentor &amp; generate login</button></div>${credBox()}
+<div class="card">${S.mentors.map(m=>`<div class="row">${av(m.name)}<div class="grow"><b>${m.name}</b><div class="small mut">${pname(m.program)}</div></div><span class="tag">${m.user}</span></div>`).join('')}</div>`}
+function vMentees(){return `<h2>My Mentees</h2><div class="card"><label>Mentee name</label><input id="en" placeholder="Full name"><button class="btn" onclick="addMentee()">Add mentee &amp; auto-generate login</button></div>${credBox()}
+<div class="card"><table><tr><th></th><th>Name</th><th>Enrollment</th><th>XP</th><th></th></tr>${S.mentees.map(m=>`<tr><td>${av(m.name,36)}</td><td>${m.name}</td><td>${m.enr}</td><td>${total(m)}</td><td><button class="btn sm alt" onclick="viewProf('${m.enr}')">Profile</button></td></tr>`).join('')}</table></div>`}
+function vResources(){return `<h2>Learning Resources</h2><div class="card"><div class="grid"><div><label>Type</label><select id="rt"><option>Video</option><option>Quiz</option><option>Project</option></select></div><div><label>Title</label><input id="rn" placeholder="Resource title"></div><div><label>Deadline (days from now)</label><input id="rd" type="number" min="1" value="5"></div><div><label>Max score</label><input id="rm" type="number" min="1" value="50"></div></div><button class="btn" onclick="addRes()">Publish resource</button></div>
+<div class="card">${S.resources.map(r=>`<div class="row"><span class="tag ${r.type}">${r.type}</span><div class="grow"><b>${r.title}</b></div><span class="small mut">${left(r.due)} | max ${r.max}</span></div>`).join('')}</div>`}
+function vDash(){const m=me(),x=total(m),p=(x%50)/50*100;
+ return `<h2>Welcome back, ${m.name.split(' ')[0]} 👋</h2><div class="grid">
+<div class="card stat"><span class="mut">Level</span><b>${lvl(m)}</b><div class="bar"><i style="width:${p}%"></i></div><span class="small mut">${50-x%50} XP to next level</span></div>
+<div class="card stat"><span class="mut">Total XP</span><b>${x}</b></div>
+<div class="card stat"><span class="mut">Leaderboard rank</span><b>#${rank(m)}</b></div>
+<div class="card stat"><span class="mut">Streak</span><b>🔥 ${m.streak}</b></div></div>
+<h3>Your assignments</h3><div class="card">${S.resources.map(r=>{const d=m.done[r.id];
+ return `<div class="row"><span class="tag ${r.type}">${r.type}</span><div class="grow"><b>${r.title}</b><div class="small ${r.due<Date.now()?'late':'mut'}">${left(r.due)} | max ${r.max} pts</div></div>${d!=null?`<span class="done">✔ ${d}/${r.max}</span>`:`<button class="btn sm" onclick="complete(${r.id})">Mark complete</button>`}</div>`}).join('')}</div>`}
+function vBoard(){return `<h2>Live Leaderboard 🏆</h2><div class="card">${board().map((m,i)=>`<div class="row ${m.enr==S.user.enr?'me':''}"><div class="rank">${i+1}</div>${av(m.name)}<div class="grow"><b>${m.name}</b><div class="small mut">Level ${lvl(m)}</div></div><b>${total(m)} XP</b></div>`).join('')}</div>`}
+function profile(m){const back=S.prof?`<button class="btn sm alt" onclick="S.prof=null;draw()">← Back</button>`:'';
+ return `${back}<div class="card hero">${av(m.name,110)}<div><h2>${m.name}</h2><div class="mut">${m.enr} | Level ${lvl(m)} | ${total(m)} XP | Rank #${rank(m)}</div><div style="margin-top:8px">${m.tags.map(t=>`<span class="tag">${t}</span> `).join('')}</div></div></div>
+<div class="card"><h3>Skill badges</h3>${badges(m).map(b=>`<span class="badge">${b[0]} ${b[1]}</span>`).join('')||'<p class="mut">Complete a resource to earn your first badge.</p>'}</div>
+<div class="card ai"><h3>✨ AI performance summary</h3><p>${summary(m)}</p></div>
+<div class="card"><h3>Skill levels</h3>${['Video','Quiz','Project'].map(t=>`<div style="margin:10px 0"><span>${t}s</span> <b style="float:right">${skill(m,t)}%</b><div class="bar"><i style="width:${skill(m,t)}%"></i></div></div>`).join('')}</div>
+<div class="card ai"><h3>✨ Recommended next steps</h3><ul>${recs(m).map(r=>`<li>${r}</li>`).join('')}</ul></div>
+<p class="small mut">Prototype note: the AI text is generated by rules from live data. The full version calls an LLM from the backend.</p>`}
+const V={Programs:vPrograms,Mentors:vMentors,Mentees:vMentees,Resources:vResources,Dashboard:vDash,Leaderboard:vBoard,'My Profile':()=>profile(me())};
+
+function loginView(){return `<div class="login"><div class="card"><h1>TechNeeds <span>Quest</span></h1><p class="mut">Learn. Level up. Lead the board.</p>
+<div class="seg">${['Admin','Mentor','Mentee'].map(r=>`<button class="${S.role==r?'on':''}" onclick="setRole('${r}')">${r}</button>`).join('')}</div>
+<label>${S.role=='Mentee'?'Enrollment number':'Username'}</label><input id="u" value="${DEMO[S.role][0]}">
+<label>Password</label><input id="p" value="${DEMO[S.role][1]}">
+<button class="btn" style="width:100%" onclick="login()">Sign in</button><p class="small mut">Demo credentials are pre-filled.</p></div></div>`}
+function shell(){const u=S.user,body=S.prof?profile(S.mentees.find(m=>m.enr==S.prof)):V[S.tab]();
+ return `<nav><div class="brand">TechNeeds <span>Quest</span></div>${TABS[u.role].map(t=>`<button class="t ${S.tab==t&&!S.prof?'on':''}" onclick="go('${t}')">${t}</button>`).join('')}<div class="chip">${av(u.name,32)}<span>${u.name} (${u.role})</span><button class="btn sm alt" onclick="logout()">Logout</button></div></nav><main>${body}</main>`}
+function draw(){$('#app').innerHTML=S.user?shell():loginView()}
+draw();
+</script>
+</body>
+</html>
